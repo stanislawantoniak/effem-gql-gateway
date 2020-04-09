@@ -1,6 +1,6 @@
 var fetch = require('node-fetch');
 
-class UserAPI {
+class AuthAPI {
 
 	baseURL = '';
 
@@ -25,17 +25,14 @@ class UserAPI {
 		};
 
 		console.log('fetch config: ', fetchConfig)
-		
-		let output = await fetch(this.baseURL, fetchConfig)
-				.then(res => res.json())
-				.then(function(json){if (typeof json.authenticated === 'undefined') json.authenticated = false; return json})
-				.then(output => console.log('getUser output: ',output));
 			
-		return output;
+		return fetch(this.baseURL, fetchConfig)
+				.then(res => res.json())
+				.then(function(json){if (typeof json.authenticated === 'undefined') json.authenticated = false; return json});
 
 	}
 
 }
 
-module.exports = UserAPI;
+module.exports = AuthAPI;
 

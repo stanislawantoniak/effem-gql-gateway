@@ -1,8 +1,8 @@
 const { ApolloServer, AuthenticationError } = require('apollo-server');
 const { ApolloGateway } = require('@apollo/gateway');
 
-const UserAPI = require('./datasources/user2');
-const api = new UserAPI();
+const AuthAPI = require('./datasources/auth');
+const api = new AuthAPI();
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -16,7 +16,7 @@ const server = new ApolloServer({
 		schemaTag: process.env.AGM_SCHEMA_TAG
 	},
 	subscriptions: false,
-	context: ({ req }) => {
+	context: async ({ req }) => {
 		// Note! This example uses the `req` object to access headers,
 		// but the arguments received by `context` vary by integration.
 		// This means they will vary for Express, Koa, Lambda, etc.!
@@ -29,9 +29,11 @@ const server = new ApolloServer({
 		const token = req.headers.authorization || '';
 
 		// try to retrieve a user with the token
-		const user = api.getUser(token);
 		 
+		const user = await api.getUser(token);	
 		console.log('user: ',user);
+		
+		if (!user.authenticated) throw new AuthenticationError('Unauthorized: You must pass valid authorization token here.');
 		
 		// add the user to the context
 		return { user };
