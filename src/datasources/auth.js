@@ -5,7 +5,6 @@ class AuthAPI {
 	baseURL = '';
 
 	constructor() {
-		//constant url - generic BazaarVoice API returning constant data
 		this.baseURL = 'https://dev.api.effem.com/oauth2-endpoint/v1/validateToken';
 	}
 

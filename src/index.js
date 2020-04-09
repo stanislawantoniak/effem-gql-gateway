@@ -22,19 +22,17 @@ const server = new ApolloServer({
 	},
 	subscriptions: false,
 	context: async ({ req }) => {
-		// Note! This example uses the `req` object to access headers,
-		// but the arguments received by `context` vary by integration.
-		// This means they will vary for Express, Koa, Lambda, etc.!
-		//
-		// To find out the correct arguments for a specific integration,
-		// see the `context` option in the API reference for `apollo-server`:
-		// https://www.apollographql.com/docs/apollo-server/api/apollo-server/
 
-		// Get the user token from the headers.
-		const token = req.headers.authorization || '';
+		console.log('referer: ', req.headers.referer);
+		
+		var refererToken = new URL(req.headers.referer).searchParams.get('accessToken');
+		
+		const token = req.headers.authorization || 'Bearer ' + refererToken;
 
 		// try to retrieve a user with the token
 
+		console.log('token: ',token);
+		
 		const user = await api.getUser(token);
 		console.log('user: ', user);
 
