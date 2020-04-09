@@ -1,5 +1,6 @@
 const { ApolloServer, AuthenticationError } = require('apollo-server');
 const { ApolloGateway } = require('@apollo/gateway');
+const AuthenticatedDataSource = require('./authenticatedds');
 
 const AuthAPI = require('./datasources/auth');
 const api = new AuthAPI();
@@ -7,7 +8,11 @@ const api = new AuthAPI();
 const dotenv = require('dotenv');
 dotenv.config();
 
-const gateway = new ApolloGateway();
+const gateway = new ApolloGateway({
+	buildService({ name, url }) {
+		return new AuthenticatedDataSource({ url });
+	},
+});
 
 const server = new ApolloServer({
 	gateway,
@@ -29,12 +34,12 @@ const server = new ApolloServer({
 		const token = req.headers.authorization || '';
 
 		// try to retrieve a user with the token
-		 
-		const user = await api.getUser(token);	
-		console.log('user: ',user);
-		
+
+		const user = await api.getUser(token);
+		console.log('user: ', user);
+
 		if (!user.authenticated) throw new AuthenticationError('Unauthorized: You must pass valid authorization token here.');
-		
+
 		// add the user to the context
 		return { user };
 	}
