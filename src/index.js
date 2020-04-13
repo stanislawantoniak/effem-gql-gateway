@@ -23,7 +23,7 @@ const server = new ApolloServer({
 	subscriptions: false,
 	context: async ({ req }) => {
 
-		console.log('referer: ', req.headers.referer);
+		console.log('referer: ', req.headers);
 		
 		var refererToken = new URL(req.headers.referer).searchParams.get('accessToken');
 		
